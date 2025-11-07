@@ -1,30 +1,30 @@
 version: '3.8'
 
 services:
-  web:
-    build: 
-      context: .
-      dockerfile: Dockerfile
+  wordpress:
+    image: wordpress:latest
     ports:
-      - "8080:8080"
-    container_name: demoweb
-    depends_on:
-      - qwen3
+      - "8080:80"
     environment:
-      - QWEN3_API_URL=http://qwen3:8000
-    networks:
-      - demo-network
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wordpress_data:/var/www/html
+    restart: always
 
-  qwen3:
-    image: ai/qwen3:8B-Q4_K_M
-    container_name: qwen3
-    ports:
-      - "8000:8000"
+  db:
+    image: mysql:8.0
     environment:
-      - PORT=8000
-    networks:
-      - demo-network
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
 
-networks:
-  demo-network:
-    driver: bridge
+volumes:
+  wordpress_data:
+  db_data:
