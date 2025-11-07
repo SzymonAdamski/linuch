@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   web:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     container_name: demoweb
@@ -10,11 +12,19 @@ services:
       - qwen3
     environment:
       - QWEN3_API_URL=http://qwen3:8000
+    networks:
+      - demo-network
 
   qwen3:
-    image: ai/qwen3:0.6B-Q4_K_M
+    image: ai/qwen3:8B-Q4_K_M
     container_name: qwen3
     ports:
       - "8000:8000"
     environment:
       - PORT=8000
+    networks:
+      - demo-network
+
+networks:
+  demo-network:
+    driver: bridge
